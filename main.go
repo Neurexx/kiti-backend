@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 	"sync"
-
+    "github.com/gorilla/handlers"
 	"github.com/gorilla/websocket"
 )
 
@@ -15,6 +15,7 @@ const (
     MessageTypeBackground = "background"
     MessageTypeClear     = "clear"
     MessageTypeHistory   = "history"
+    MessageTypeText      = "text"
 )
 
 // DrawData represents the drawing action data
@@ -26,6 +27,15 @@ type DrawData struct {
     CurrY     float64 `json:"currY"`
     Color     string  `json:"color"`
     BrushSize int     `json:"brushSize"`
+}
+
+type TextData struct {
+    Type  string `json:"type"`
+    Text  string `json:"text"`
+    X     int    `json:"x"`
+    Y     int    `json:"y"`
+    Color string `json:"color"`
+    TextSize int `json:"textSize"`
 }
 
 // BackgroundData represents background color change data
@@ -235,11 +245,14 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-    http.Handle("/", http.FileServer(http.Dir("public")))
-    http.HandleFunc("/ws", handleWebSocket)
+    mux:=http.NewServeMux()
+    mux.Handle("/", http.FileServer(http.Dir("public")))
+    mux.HandleFunc("/ws", handleWebSocket)
+    
+    
     
     log.Println("Server starting on :8080")
-    if err := http.ListenAndServe(":8080", nil); err != nil {
+    if err := http.ListenAndServe(":8080",handlers.CORS(handlers.AllowedOrigins([]string{"https://klim.vercel.app"}),)(mux)); err != nil {
         log.Fatal("ListenAndServe:", err)
     }
 }
