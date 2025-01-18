@@ -5,7 +5,8 @@ import (
 	"log"
 	"net/http"
 	"sync"
-    "github.com/gorilla/handlers"
+
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/websocket"
 )
 
@@ -252,7 +253,7 @@ func main() {
     
     
     log.Println("Server starting on :8080")
-    if err := http.ListenAndServe(":8080",handlers.CORS(handlers.AllowedOrigins([]string{"https://klim.vercel.app"}),)(mux)); err != nil {
+    if err := http.ListenAndServe(":8080",handlers.CORS(handlers.AllowedOrigins([]string{"https://klum.vercel.app"}),)(mux)); err != nil {
         log.Fatal("ListenAndServe:", err)
     }
 }
