@@ -5,8 +5,6 @@ import (
 	"log"
 	"net/http"
 	"sync"
-
-	"github.com/gorilla/handlers"
 	"github.com/gorilla/websocket"
 )
 
@@ -82,7 +80,7 @@ var (
         ReadBufferSize:  1024,
         WriteBufferSize: 1024,
         CheckOrigin: func(r *http.Request) bool {
-            return true
+            return r.Header.Get("Origin") == "https://klum.vercel.app"
         },
     }
     
@@ -246,14 +244,14 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-    mux:=http.NewServeMux()
-    mux.Handle("/", http.FileServer(http.Dir("public")))
-    mux.HandleFunc("/ws", handleWebSocket)
+
+
+    http.HandleFunc("/ws", handleWebSocket)
     
     
     
     log.Println("Server starting on :8080")
-    if err := http.ListenAndServe(":8080",handlers.CORS(handlers.AllowedOrigins([]string{"https://klum.vercel.app"}),)(mux)); err != nil {
+    if err := http.ListenAndServe(":8080",nil); err != nil {
         log.Fatal("ListenAndServe:", err)
     }
 }
